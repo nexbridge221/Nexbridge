@@ -30,12 +30,12 @@ services:
         sync: false               # voir le guide (openssl genpkey)
       - key: JWT_PUBLIC_KEY
         sync: false
+  - type: keyvalue
+    name: nexbridge-redis
+    plan: free
+    region: frankfurt
+    ipAllowList: []               # accès interne uniquement
 databases:
   - name: nexbridge-db
     plan: free                    # démo : la base gratuite expire après ~30 jours ; passer à « basic-256mb » pour la conserver
     region: frankfurt
-keyvalue:
-  - name: nexbridge-redis
-    plan: free
-    region: frankfurt
-    ipAllowList: []               # accès interne uniquement
