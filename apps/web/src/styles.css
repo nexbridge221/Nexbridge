@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@import "@fontsource-variable/plus-jakarta-sans/wght.css";
+
+/* ============================================================
+   Design system NEXBRIDGE — jetons issus de la charte graphique.
+   Contrastes calculés (WCAG 2.1) : voir docs/03-nexspace-donnees-design.md §C.2
+   ============================================================ */
+@theme {
+  --font-sans: "Plus Jakarta Sans Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  /* Couleurs de marque */
+  --color-nexus: #0b5fff;            /* Bleu Nexus : action principale — 5,13:1 sur blanc */
+  --color-nexus-dark: #1d4ed8;       /* survol / texte renforcé — 6,70:1 */
+  --color-innovation: #3b82f6;       /* Bleu Innovation : dégradés, éléments graphiques (pas de texte) */
+  --color-impact: #8b5cf6;           /* Violet Impact : dégradés, accents (pas de texte normal) */
+  --color-impact-text: #6d28d9;      /* dérivé texte — 7,10:1 */
+  --color-collab: #14b8a6;           /* Vert Collaboration : succès, graphiques (pas de texte) */
+  --color-collab-text: #0f766e;      /* dérivé texte — 5,47:1 */
+  --color-cloud: #f8fafc;            /* Gris Élégant : fond de l'application */
+  --color-night: #031646;            /* Bleu nuit (mesuré sur la charte) : fonds sombres */
+  --color-night-2: #0a2160;
+  --color-ink: #0f172a;              /* texte principal */
+  --color-muted: #475569;            /* texte secondaire — 7,5:1 sur blanc */
+  --color-line: #e2e8f0;
+  --color-amber-text: #b45309;       /* texte ambre — 5,02:1 */
+
+  /* Couleurs par rôle (pastilles de la charte) */
+  --color-role-company: #0b5fff;
+  --color-role-student: #8b5cf6;
+  --color-role-institution: #14b8a6;
+  --color-role-mentor: #f59e0b;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.05);
+  --shadow-pop: 0 10px 40px rgb(3 22 70 / 0.18);
+
+  --breakpoint-xs: 320px;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { @apply bg-cloud text-ink antialiased font-sans; font-size: 16px; line-height: 1.625; }
+  h1, h2, h3, h4 { @apply font-bold tracking-tight text-night; line-height: 1.15; }
+  :focus-visible { outline: 2px solid var(--color-nexus); outline-offset: 3px; border-radius: 6px; }
+  ::selection { background: #0b5fff33; }
+  img { max-width: 100%; height: auto; }
+  table { font-variant-numeric: tabular-nums; }
+}
+
+/* Mouvements : respectent la préférence « réduire les animations » */
+@keyframes nb-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+@keyframes nb-dash { to { stroke-dashoffset: -48 } }
+@keyframes nb-pulse { 0% { r: 3; opacity: .9 } 100% { r: 14; opacity: 0 } }
+@keyframes nb-shimmer { 100% { transform: translateX(100%) } }
+@keyframes nb-in { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
+.nb-float { animation: nb-float 7s ease-in-out infinite; }
+.nb-dash { stroke-dasharray: 4 8; animation: nb-dash 2.4s linear infinite; }
+.nb-pulse { animation: nb-pulse 3s ease-out infinite; }
+.nb-in { animation: nb-in .6s ease both; }
+.nb-skeleton { position: relative; overflow: hidden; background: #e2e8f0; border-radius: 8px; }
+.nb-skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, rgb(255 255 255 / .6), transparent); animation: nb-shimmer 1.4s infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+.nb-container { @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8; }
+.nb-gradient-text { background: linear-gradient(90deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.nb-skip { @apply absolute left-3 top-3 z-[100] -translate-y-24 rounded-md bg-nexus px-4 py-2 font-semibold text-white focus:translate-y-0; }

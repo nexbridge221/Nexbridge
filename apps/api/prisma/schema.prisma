@@ -1,0 +1,1511 @@
+// NEXBRIDGE — schéma de base de données (PostgreSQL)
+// Phase 1 : identité, profils, compétences, contenus publics, défis (socle).
+// Les domaines NexSpace, évaluations, badges, paiements arrivent avec leurs phases
+// (voir docs/03-nexspace-donnees-design.md §B pour le modèle cible complet).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/* ===================== Énumérations ===================== */
+
+enum Role {
+  ENTREPRISE
+  ETUDIANT
+  MENTOR
+  REFERENT_ACADEMIQUE
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  EN_ATTENTE_EMAIL
+  ACTIF
+  SUSPENDU
+  ANONYMISE
+}
+
+enum OAuthProvider {
+  GOOGLE
+  LINKEDIN
+}
+
+enum EmailTokenType {
+  VERIFICATION
+  RESET
+}
+
+enum SkillLevel {
+  SENSIBILISE
+  PRATICIEN
+  CONFIRME
+  EXPERT
+}
+
+enum SkillCategory {
+  TECHNIQUE
+  METIER
+  TRANSVERSALE
+  SECTORIELLE
+}
+
+enum SkillSource {
+  DECLARE
+  PROJET
+  CERTIFIE
+}
+
+enum Availability {
+  PLEIN_TEMPS
+  PARTIEL
+  WEEK_END
+}
+
+enum StudyLevel {
+  L1
+  L2
+  L3
+  M1
+  M2
+  DOCTORAT
+  AUTRE
+}
+
+enum KycStatus {
+  NON_SOUMIS
+  EN_VERIFICATION
+  VALIDE
+  REFUSE
+}
+
+enum KycDocumentType {
+  NINEA
+  RCCM
+  AUTRE
+}
+
+enum CompanySize {
+  TPE
+  PME
+  ETI
+  GRANDE_ENTREPRISE
+  ORGANISATION_PUBLIQUE
+  ONG
+}
+
+enum CompanyContactRole {
+  DRH
+  DIR_INNOVATION
+  CHEF_PROJET
+  AUTRE
+}
+
+enum InstitutionStatus {
+  EN_ATTENTE
+  VALIDE
+}
+
+enum ScanStatus {
+  EN_ATTENTE
+  SAIN
+  INFECTE
+  NON_ANALYSE // antivirus non configuré : le fichier est servi avec un avertissement côté admin
+}
+
+enum ChallengeStatus {
+  BROUILLON
+  EN_REVISION
+  PUBLIE
+  EN_COURS
+  CLOTURE
+  ARCHIVE
+}
+
+enum ApplicationStatus {
+  SOUMISE
+  PRE_SELECTIONNEE
+  ACCEPTEE
+  REFUSEE
+  RETIREE
+}
+
+enum ApplicationSource {
+  LIBRE
+  NEXMATCH
+}
+
+enum TeamOrigin {
+  NEXMATCH
+  MANUELLE
+}
+
+enum TeamStatus {
+  EN_VALIDATION
+  VALIDEE
+  ANNULEE
+}
+
+enum TeamMemberStatus {
+  INVITE
+  ACCEPTE
+  DECLINE
+  EXPIRE
+  REMPLACE
+}
+
+enum ValidationStep {
+  ENTREPRISE
+  ETUDIANTS
+  ACADEMIQUE
+}
+
+enum StepStatus {
+  EN_ATTENTE
+  VALIDE
+  REFUSE
+  NON_REQUIS
+}
+
+enum ProjectStatus {
+  PLANIFIE
+  EN_COURS
+  EN_EVALUATION
+  EN_PAUSE
+  TERMINE
+  ANNULE
+}
+
+enum ProjectRole {
+  CONTACT_ENTREPRISE
+  CHEF_PROJET
+  ETUDIANT
+  MENTOR
+  REFERENT
+}
+
+enum EscrowStatus {
+  NON_DEPOSE
+  DEPOSE
+  LIBERE
+  REMBOURSE
+}
+
+enum DeliverableFormat {
+  RAPPORT
+  PROTOTYPE
+  CODE
+  PRESENTATION
+  AUTRE
+}
+
+enum TaskStatus {
+  A_FAIRE
+  EN_COURS
+  EN_REVISION
+  TERMINE
+}
+
+enum TaskPriority {
+  BASSE
+  NORMALE
+  HAUTE
+  URGENTE
+}
+
+enum MilestoneStatus {
+  A_VENIR
+  EN_COURS
+  PRET
+  VALIDE
+  MANQUE
+}
+
+enum DocVisibility {
+  TOUS
+  EQUIPE_ET_MENTOR
+  EQUIPE_SEULE
+}
+
+enum ChannelType {
+  GENERAL
+  THEMATIQUE
+  DIRECT
+}
+
+enum DeliverableStatus {
+  A_PRODUIRE
+  EN_PREPARATION
+  SOUMIS
+  EN_REVISION
+  A_CORRIGER
+  VALIDE
+}
+
+enum MeetingType {
+  KICKOFF
+  JALON
+  SOUTENANCE
+  COURANTE
+}
+
+enum EvaluationType {
+  ENTREPRISE_PROJET
+  ENTREPRISE_ETUDIANT
+  MENTOR_ETUDIANT
+  ETUDIANT_EXPERIENCE
+  PAIR
+  ETUDIANT_MENTOR
+}
+
+enum BadgeType {
+  COMPETENCE
+  EXCELLENCE
+  SECTORIEL
+}
+
+enum AcademicStatus {
+  EN_ATTENTE
+  VALIDE
+  REFUSE
+}
+
+enum ReportStatus {
+  OUVERT
+  TRAITE
+  REJETE
+}
+
+enum Currency {
+  XOF
+  EUR
+}
+
+/* ===================== Identité & sécurité ===================== */
+
+model User {
+  id               String     @id @default(uuid(7))
+  email            String     @unique
+  passwordHash     String? // null si compte créé uniquement via OAuth
+  role             Role
+  status           UserStatus @default(EN_ATTENTE_EMAIL)
+  firstName        String
+  lastName         String
+  phone            String?
+  locale           String     @default("fr")
+  avatarFileId     String?
+  emailVerifiedAt  DateTime?
+  twoFactorEnabled Boolean    @default(false)
+  twoFactorSecret  String? // chiffré AES-256-GCM
+  failedLogins     Int        @default(0)
+  lockedUntil      DateTime?
+  lastLoginAt      DateTime?
+  isDemo           Boolean    @default(false) // donnée de démonstration (jamais en production)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  oauthAccounts OAuthAccount[]
+  refreshTokens RefreshToken[]
+  emailTokens   EmailToken[]
+  consents      Consent[]
+  notifications Notification[]
+  notificationPrefs NotificationPreference[]
+  files         FileObject[]
+
+  studentProfile StudentProfile?
+  projectMemberships ProjectMember[]
+  taskAssignments    TaskAssignee[]
+  mentorProfile  MentorProfile?
+  referentProfile ReferentProfile?
+  companyMemberships CompanyMember[]
+
+  @@index([role, status])
+}
+
+model OAuthAccount {
+  id                String        @id @default(uuid(7))
+  userId            String
+  provider          OAuthProvider
+  providerAccountId String
+  createdAt         DateTime      @default(now())
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model RefreshToken {
+  id           String    @id @default(uuid(7))
+  userId       String
+  tokenHash    String    @unique
+  familyId     String
+  expiresAt    DateTime
+  revokedAt    DateTime?
+  replacedById String?
+  userAgent    String?
+  ipHash       String?
+  createdAt    DateTime  @default(now())
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+}
+
+model EmailToken {
+  id        String         @id @default(uuid(7))
+  userId    String
+  type      EmailTokenType
+  tokenHash String         @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime       @default(now())
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+model Consent {
+  id        String    @id @default(uuid(7))
+  userId    String
+  type      String // ex. CGU, CONFIDENTIALITE, NEWSLETTER
+  version   String
+  grantedAt DateTime  @default(now())
+  revokedAt DateTime?
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, type])
+}
+
+/// Journal d'audit — append-only : aucun UPDATE/DELETE applicatif.
+model AuditLog {
+  id         String   @id @default(uuid(7))
+  actorId    String?
+  action     String
+  entityType String?
+  entityId   String?
+  metadata   Json?
+  ipHash     String?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(uuid(7))
+  userId    String
+  type      String
+  title     String
+  body      String?
+  link      String?
+  payload   Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+}
+
+model NotificationPreference {
+  id     String  @id @default(uuid(7))
+  userId String
+  type   String
+  inApp  Boolean @default(true)
+  email  Boolean @default(true)
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type])
+}
+
+/// Registre central des fichiers (logos, pièces KYC, avatars, documents).
+model FileObject {
+  id         String     @id @default(uuid(7))
+  ownerId    String?
+  key        String     @unique // chemin dans le stockage (nom aléatoire)
+  originalName String
+  mime       String
+  size       Int
+  sha256     String
+  scanStatus ScanStatus @default(EN_ATTENTE)
+  createdAt  DateTime   @default(now())
+  owner      User?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
+  kycDocuments KycDocument[]
+
+  @@index([ownerId])
+}
+
+/* ===================== Organisations & profils ===================== */
+
+model Company {
+  id          String       @id @default(uuid(7))
+  legalName   String
+  sector      String?
+  size        CompanySize?
+  country     String?
+  city        String?
+  description String?
+  website     String?
+  logoFileId  String?
+  ninea       String? // chiffré
+  rccm        String? // chiffré
+  kycStatus   KycStatus    @default(NON_SOUMIS)
+  kycRejectionReason String?
+  trustIndex  Decimal?     @db.Decimal(4, 2) // « Indice de confiance » (jamais calculé tant qu'il n'y a pas de données)
+  isDemo      Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  members      CompanyMember[]
+  kycDocuments KycDocument[]
+  challenges   Challenge[]
+
+  @@index([kycStatus])
+}
+
+model CompanyMember {
+  id          String             @id @default(uuid(7))
+  userId      String
+  companyId   String
+  jobTitle    String?
+  contactRole CompanyContactRole @default(AUTRE)
+  isOwner     Boolean            @default(false)
+  createdAt   DateTime           @default(now())
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company     Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@index([companyId])
+}
+
+model KycDocument {
+  id              String          @id @default(uuid(7))
+  companyId       String
+  type            KycDocumentType
+  fileId          String
+  status          KycStatus       @default(EN_VERIFICATION)
+  reviewedById    String?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime        @default(now())
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  file            FileObject      @relation(fields: [fileId], references: [id])
+
+  @@index([companyId])
+}
+
+model Institution {
+  id          String            @id @default(uuid(7))
+  name        String            @unique
+  country     String?
+  city        String?
+  website     String?
+  logoFileId  String?
+  status      InstitutionStatus @default(EN_ATTENTE)
+  validatedById String?
+  isDemo      Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  programs  Program[]
+  students  StudentProfile[]
+  referents ReferentProfile[]
+  cohorts   Cohort[]
+}
+
+model Program {
+  id            String      @id @default(uuid(7))
+  institutionId String
+  name          String
+  level         String?
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  students      StudentProfile[]
+
+  @@unique([institutionId, name])
+}
+
+model StudentProfile {
+  id                 String        @id @default(uuid(7))
+  userId             String        @unique
+  institutionId      String?
+  programId          String?
+  studyLevel         StudyLevel?
+  bio                String?
+  city               String?
+  country            String?
+  availability       Availability?
+  availabilityNotes  String?
+  sectorPreferences  String[]      @default([])
+  reliabilityIndex   Decimal?      @db.Decimal(4, 2) // « Indice de fiabilité » (vide tant qu'il n'y a pas de projets)
+  isPortfolioPublic  Boolean       @default(false)
+  slug               String        @unique
+  onboardingDone     Boolean       @default(false)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull)
+  program     Program?     @relation(fields: [programId], references: [id], onDelete: SetNull)
+  skills      StudentSkill[]
+  portfolio   PortfolioItem[]
+  applications Application[]
+  teamMemberships TeamMember[]
+  badgeAwards  BadgeAward[]
+  certifications Certification[]
+  academicValidations AcademicValidation[]
+  attestations Attestation[]
+  cohortLinks  CohortMember[]
+
+  @@index([institutionId])
+}
+
+model PortfolioItem {
+  id          String         @id @default(uuid(7))
+  studentId   String
+  title       String
+  description String?
+  url         String?
+  isPublic    Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model MentorProfile {
+  id                    String   @id @default(uuid(7))
+  userId                String   @unique
+  bio                   String?
+  yearsExperience       Int?
+  indicativeHourlyRate  Int? // FCFA
+  maxConcurrentProjects Int      @default(3)
+  expertiseSectors      String[] @default([])
+  certifications        String[] @default([])
+  ratingAvg             Decimal? @db.Decimal(3, 2)
+  onboardingDone        Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ReferentProfile {
+  id             String       @id @default(uuid(7))
+  userId         String       @unique
+  institutionId  String
+  jobTitle       String?
+  programs       String[]     @default([])
+  onboardingDone Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  institution    Institution  @relation(fields: [institutionId], references: [id])
+
+  @@index([institutionId])
+}
+
+/* ===================== Compétences ===================== */
+
+model Sector {
+  id         String      @id @default(uuid(7))
+  name       String      @unique
+  slug       String      @unique
+  challenges Challenge[]
+}
+
+model Skill {
+  id           String        @id @default(uuid(7))
+  name         String
+  slug         String        @unique
+  category     SkillCategory
+  active       Boolean       @default(true)
+  mergedIntoId String?
+  createdAt    DateTime      @default(now())
+
+  studentSkills   StudentSkill[]
+  challengeSkills ChallengeSkill[]
+  evaluationSkills EvaluationSkill[]
+
+  @@index([category, active])
+}
+
+model StudentSkill {
+  id        String         @id @default(uuid(7))
+  studentId String
+  skillId   String
+  level     SkillLevel
+  source    SkillSource    @default(DECLARE)
+  createdAt DateTime       @default(now())
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  skill     Skill          @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skillId])
+}
+
+/* ===================== Défis (socle — NexBrief complet en phase 2) ===================== */
+
+model Challenge {
+  id              String          @id @default(uuid(7))
+  companyId       String
+  createdById     String
+  title           String
+  slug            String          @unique
+  context         String
+  objectives      String?
+  sectorId        String?
+  keywords        String[]        @default([])
+  teamSize        Int             @default(4)
+  minStudyLevel   StudyLevel?
+  desiredStart    DateTime?
+  durationWeeks   Int?
+  budgetAmount    BigInt? // plus petite unité (XOF : francs ; EUR : centimes)
+  budgetCurrency  Currency        @default(XOF)
+  budgetPublic    Boolean         @default(false)
+  paymentTerms    String?
+  status          ChallengeStatus @default(BROUILLON)
+  rejectionReason String?
+  publishedAt     DateTime?
+  closedAt        DateTime?
+  closeReason     String?
+  isDemo          Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  company Company          @relation(fields: [companyId], references: [id])
+  sector  Sector?          @relation(fields: [sectorId], references: [id])
+  skills  ChallengeSkill[]
+  deliverables ChallengeDeliverable[]
+  milestones   ChallengeMilestone[]
+  reviews      ChallengeReview[]
+  history      ChallengeStatusHistory[]
+  applications Application[]
+  matchRuns    MatchRun[]
+  teams        Team[]
+  project      Project?
+
+  @@index([status, publishedAt])
+  @@index([companyId])
+}
+
+model ChallengeSkill {
+  id          String     @id @default(uuid(7))
+  challengeId String
+  skillId     String
+  minLevel    SkillLevel @default(PRATICIEN)
+  weight      Int        @default(1)
+  challenge   Challenge  @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  skill       Skill      @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, skillId])
+}
+
+/* ===================== Contenus publics (administrables) ===================== */
+
+model Testimonial {
+  id           String   @id @default(uuid(7))
+  authorName   String
+  authorRole   String?
+  organization String?
+  quote        String
+  published    Boolean  @default(false)
+  isDemo       Boolean  @default(false)
+  position     Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model Partner {
+  id        String   @id @default(uuid(7))
+  name      String
+  kind      String // INSTITUTIONNEL | ACADEMIQUE | ENTREPRISE
+  website   String?
+  logoUrl   String?
+  published Boolean  @default(false)
+  isDemo    Boolean  @default(false)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model FaqItem {
+  id        String   @id @default(uuid(7))
+  question  String
+  answer    String
+  audience  String   @default("GENERAL") // GENERAL | ENTREPRISE | ETUDIANT | ETABLISSEMENT
+  published Boolean  @default(true)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id           String    @id @default(uuid(7))
+  name         String
+  email        String
+  organization String?
+  subject      String
+  message      String
+  handledAt    DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([handledAt, createdAt])
+}
+
+model NewsletterSubscriber {
+  id          String    @id @default(uuid(7))
+  email       String    @unique
+  consentAt   DateTime  @default(now())
+  confirmedAt DateTime?
+  tokenHash   String?
+  createdAt   DateTime  @default(now())
+}
+
+/* ===================== Phase 2 : NexBrief (compléments) ===================== */
+
+model ChallengeDeliverable {
+  id          String            @id @default(uuid(7))
+  challengeId String
+  title       String
+  format      DeliverableFormat @default(RAPPORT)
+  description String?
+  challenge   Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+}
+
+model ChallengeMilestone {
+  id          String    @id @default(uuid(7))
+  challengeId String
+  title       String
+  description String?
+  targetWeek  Int
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+}
+
+model ChallengeReview {
+  id          String    @id @default(uuid(7))
+  challengeId String
+  adminId     String
+  decision    String // APPROUVE | REFUSE
+  comment     String?
+  checklist   Json?
+  createdAt   DateTime  @default(now())
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId])
+}
+
+model ChallengeStatusHistory {
+  id          String          @id @default(uuid(7))
+  challengeId String
+  from        ChallengeStatus?
+  to          ChallengeStatus
+  actorId     String?
+  note        String?
+  at          DateTime        @default(now())
+  challenge   Challenge       @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId, at])
+}
+
+model BriefTemplate {
+  id       String  @id @default(uuid(7))
+  name     String
+  sector   String
+  content  Json // { context, objectives, deliverables[], milestones[], skills[] }
+  active   Boolean @default(true)
+  position Int     @default(0)
+}
+
+/* ===================== Candidatures, matching, équipes ===================== */
+
+model Application {
+  id          String            @id @default(uuid(7))
+  challengeId String
+  studentId   String
+  motivation  String?
+  source      ApplicationSource @default(LIBRE)
+  status      ApplicationStatus @default(SOUMISE)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  challenge   Challenge         @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  student     StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([challengeId, studentId])
+  @@index([studentId])
+}
+
+model MatchRun {
+  id             String    @id @default(uuid(7))
+  challengeId    String
+  engine         String // REGLES | IA
+  engineVersion  String
+  weights        Json
+  /// Classement complet des candidats (utilisé pour le remplacement automatique) : [{studentId, score}]
+  ranking        Json
+  durationMs     Int
+  createdById    String?
+  createdAt      DateTime  @default(now())
+  challenge      Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  proposals      MatchProposal[]
+
+  @@index([challengeId, createdAt])
+}
+
+model MatchProposal {
+  id             String   @id @default(uuid(7))
+  matchRunId     String
+  rank           Int
+  totalScore     Int
+  diversityScore Int
+  explanation    Json
+  status         String   @default("PROPOSEE") // PROPOSEE | APPROUVEE | ECARTEE
+  matchRun       MatchRun @relation(fields: [matchRunId], references: [id], onDelete: Cascade)
+  members        MatchProposalMember[]
+  teams          Team[]
+
+  @@index([matchRunId])
+}
+
+model MatchProposalMember {
+  id          String        @id @default(uuid(7))
+  proposalId  String
+  studentId   String
+  score       Int
+  skillScores Json
+  penalties   Json
+  proposal    MatchProposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+
+  @@index([proposalId])
+}
+
+model Team {
+  id          String     @id @default(uuid(7))
+  challengeId String
+  origin      TeamOrigin
+  status      TeamStatus @default(EN_VALIDATION)
+  proposalId  String?
+  matchRunId  String?
+  createdById String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  challenge   Challenge      @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  proposal    MatchProposal? @relation(fields: [proposalId], references: [id], onDelete: SetNull)
+  members     TeamMember[]
+  steps       TeamValidationStep[]
+  project     Project?
+
+  @@index([challengeId, status])
+}
+
+model TeamMember {
+  id           String           @id @default(uuid(7))
+  teamId       String
+  studentId    String
+  isLead       Boolean          @default(false)
+  status       TeamMemberStatus @default(INVITE)
+  invitedAt    DateTime         @default(now())
+  respondedAt  DateTime?
+  deadlineAt   DateTime
+  lastReminderAt DateTime?
+  replacedById String?
+  team         Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  student      StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, studentId])
+  @@index([studentId, status])
+}
+
+model TeamValidationStep {
+  id        String         @id @default(uuid(7))
+  teamId    String
+  step      ValidationStep
+  status    StepStatus     @default(EN_ATTENTE)
+  actorId   String?
+  comment   String?
+  decidedAt DateTime?
+  team      Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, step])
+}
+
+/* ===================== Projet (créé au kick-off ; NexSpace en phase 3) ===================== */
+
+model Project {
+  id               String        @id @default(uuid(7))
+  challengeId      String        @unique
+  teamId           String        @unique
+  companyId        String
+  name             String
+  description      String?
+  status           ProjectStatus @default(PLANIFIE)
+  startDate        DateTime?
+  plannedEndDate   DateTime?
+  budgetAmount     BigInt?
+  budgetCurrency   Currency      @default(XOF)
+  milestoneRule    String        @default("LES_DEUX") // MENTOR | ENTREPRISE | LES_DEUX
+  progressPct      Int           @default(0)
+  lastActivityAt   DateTime?
+  createdAt        DateTime      @default(now())
+  challenge        Challenge     @relation(fields: [challengeId], references: [id])
+  team             Team          @relation(fields: [teamId], references: [id])
+  members          ProjectMember[]
+  escrow           Escrow?
+  evaluations      Evaluation[]
+  academicValidations AcademicValidation[]
+  attestations     Attestation[]
+  badgeAwards      BadgeAward[]
+  closedAt         DateTime?
+  tasks            Task[]
+  milestones       Milestone[]
+  labels           Label[]
+  folders          Folder[]
+  documents        Document[]
+  channels         Channel[]
+  activity         ActivityEvent[]
+  deliverables     Deliverable[]
+  meetings         Meeting[]
+  reports          MentorReport[]
+}
+
+model ProjectMember {
+  id          String      @id @default(uuid(7))
+  projectId   String
+  userId      String
+  projectRole ProjectRole
+  joinedAt    DateTime    @default(now())
+  leftAt      DateTime?
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([userId])
+}
+
+/// Point d'accroche paiement (phase 5) : AUCUN flux d'argent. Le statut ne passe à DEPOSE que sur confirmation réelle d'un prestataire.
+model Escrow {
+  id          String       @id @default(uuid(7))
+  projectId   String       @unique
+  amountHeld  BigInt       @default(0)
+  currency    Currency     @default(XOF)
+  status      EscrowStatus @default(NON_DEPOSE)
+  createdAt   DateTime     @default(now())
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  events      PaymentEvent[]
+}
+
+enum PaymentEventKind {
+  VIREMENT_DECLARE
+  DEPOT_CONFIRME
+  DEPOT_REJETE
+  LIBERATION_ENREGISTREE
+  REMBOURSEMENT_ENREGISTRE
+}
+
+/// Registre des mouvements d'un séquestre. NEXBRIDGE n'exécute aucun virement : ce registre garde la trace
+/// de ce que l'entreprise déclare et de ce qu'un administrateur constate sur le relevé bancaire / chez le prestataire.
+model PaymentEvent {
+  id          String           @id @default(uuid(7))
+  escrowId    String
+  kind        PaymentEventKind
+  method      String // VIREMENT | STRIPE
+  amount      BigInt
+  currency    Currency
+  reference   String?
+  note        String?
+  recordedBy  String?
+  externalId  String?          @unique // identifiant côté prestataire (idempotence des webhooks)
+  createdAt   DateTime         @default(now())
+  escrow      Escrow           @relation(fields: [escrowId], references: [id], onDelete: Cascade)
+
+  @@index([escrowId, createdAt])
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+}
+
+/* ===================== Phase 3 : NexSpace ===================== */
+
+model Milestone {
+  id                   String          @id @default(uuid(7))
+  projectId            String
+  title                String
+  description          String?
+  targetDate           DateTime
+  ownerId              String?
+  status               MilestoneStatus @default(A_VENIR)
+  mentorValidatedAt    DateTime?
+  companyValidatedAt   DateTime?
+  validatedAt          DateTime?
+  createdAt            DateTime        @default(now())
+  project              Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks                Task[]
+  deliverables         Deliverable[]
+
+  @@index([projectId, targetDate])
+}
+
+model Label {
+  id        String   @id @default(uuid(7))
+  projectId String
+  name      String
+  color     String   @default("#3B82F6")
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  links     TaskLabel[]
+
+  @@unique([projectId, name])
+}
+
+model Task {
+  id           String       @id @default(uuid(7))
+  projectId    String
+  milestoneId  String?
+  parentTaskId String?
+  title        String
+  description  String?
+  status       TaskStatus   @default(A_FAIRE)
+  priority     TaskPriority @default(NORMALE)
+  startDate    DateTime?
+  dueDate      DateTime?
+  /// Ordre dans la colonne (insertion par milieu : un déplacement ne modifie qu'une ligne)
+  position     Float        @default(0)
+  createdById  String
+  completedAt  DateTime?
+  deletedAt    DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone    Milestone?   @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  parent       Task?        @relation("Subtasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subtasks     Task[]       @relation("Subtasks")
+  assignees    TaskAssignee[]
+  labels       TaskLabel[]
+  comments     TaskComment[]
+  history      TaskHistory[]
+  attachments  TaskAttachment[]
+
+  @@index([projectId, status, position])
+  @@index([projectId, dueDate])
+}
+
+model TaskAssignee {
+  id     String @id @default(uuid(7))
+  taskId String
+  userId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, userId])
+  @@index([userId])
+}
+
+model TaskLabel {
+  taskId  String
+  labelId String
+  task    Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  label   Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, labelId])
+}
+
+model TaskComment {
+  id        String    @id @default(uuid(7))
+  taskId    String
+  authorId  String
+  body      String
+  editedAt  DateTime?
+  createdAt DateTime  @default(now())
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, createdAt])
+}
+
+model TaskHistory {
+  id       String   @id @default(uuid(7))
+  taskId   String
+  actorId  String
+  field    String
+  oldValue String?
+  newValue String?
+  at       DateTime @default(now())
+  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId, at])
+}
+
+model TaskAttachment {
+  id        String   @id @default(uuid(7))
+  taskId    String
+  documentId String
+  addedById String
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  document  Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, documentId])
+}
+
+model Folder {
+  id         String        @id @default(uuid(7))
+  projectId  String
+  parentId   String?
+  name       String
+  visibility DocVisibility @default(TOUS)
+  createdAt  DateTime      @default(now())
+  project    Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parent     Folder?       @relation("FolderTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children   Folder[]      @relation("FolderTree")
+  documents  Document[]
+
+  @@index([projectId, parentId])
+}
+
+model Document {
+  id               String        @id @default(uuid(7))
+  projectId        String
+  folderId         String?
+  name             String
+  visibility       DocVisibility @default(TOUS)
+  currentVersionId String?
+  createdById      String
+  createdAt        DateTime      @default(now())
+  deletedAt        DateTime?
+  project          Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  folder           Folder?       @relation(fields: [folderId], references: [id], onDelete: SetNull)
+  versions         DocumentVersion[]
+  taskLinks        TaskAttachment[]
+
+  @@index([projectId, folderId])
+}
+
+model DocumentVersion {
+  id           String   @id @default(uuid(7))
+  documentId   String
+  versionNo    Int
+  fileId       String
+  uploadedById String
+  createdAt    DateTime @default(now())
+  document     Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  submissions  DeliverableSubmission[]
+
+  @@unique([documentId, versionNo])
+}
+
+model Channel {
+  id         String      @id @default(uuid(7))
+  projectId  String
+  type       ChannelType
+  name       String
+  dmKey      String? // « idA:idB » trié, unique par projet pour les messages directs
+  createdAt  DateTime    @default(now())
+  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  members    ChannelMember[]
+  messages   Message[]
+
+  @@unique([projectId, dmKey])
+  @@index([projectId, type])
+}
+
+model ChannelMember {
+  id         String   @id @default(uuid(7))
+  channelId  String
+  userId     String
+  lastReadAt DateTime @default(now())
+  channel    Channel  @relation(fields: [channelId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String    @id @default(uuid(7))
+  channelId String
+  authorId  String
+  body      String
+  parentId  String?
+  fileId    String?
+  editedAt  DateTime?
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  channel   Channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  mentions  MessageMention[]
+  reactions MessageReaction[]
+
+  @@index([channelId, createdAt])
+  @@index([parentId])
+}
+
+model MessageMention {
+  messageId String
+  userId    String
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId])
+}
+
+model MessageReaction {
+  messageId String
+  userId    String
+  emoji     String
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId, emoji])
+}
+
+/// Journal chronologique non modifiable d'un projet.
+model ActivityEvent {
+  id         String   @id @default(uuid(7))
+  projectId  String
+  actorId    String?
+  type       String
+  entityType String?
+  entityId   String?
+  label      String // texte lisible (ex. « a déplacé la tâche X vers En cours »)
+  metadata   Json?
+  createdAt  DateTime @default(now())
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt(sort: Desc)])
+}
+
+model Deliverable {
+  id               String            @id @default(uuid(7))
+  projectId        String
+  milestoneId      String?
+  name             String
+  description      String?
+  expectedFormat   String?
+  dueDate          DateTime?
+  ownerId          String?
+  status           DeliverableStatus @default(A_PRODUIRE)
+  mentorApprovedAt DateTime?
+  submittedAt      DateTime?
+  validatedAt      DateTime?
+  createdAt        DateTime          @default(now())
+  project          Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestone        Milestone?        @relation(fields: [milestoneId], references: [id], onDelete: SetNull)
+  submissions      DeliverableSubmission[]
+
+  @@index([projectId, status])
+}
+
+model DeliverableSubmission {
+  id                String          @id @default(uuid(7))
+  deliverableId     String
+  versionNo         Int
+  documentVersionId String
+  submittedById     String
+  note              String?
+  submittedAt       DateTime        @default(now())
+  deliverable       Deliverable     @relation(fields: [deliverableId], references: [id], onDelete: Cascade)
+  documentVersion   DocumentVersion @relation(fields: [documentVersionId], references: [id])
+  reviews           DeliverableReview[]
+
+  @@unique([deliverableId, versionNo])
+}
+
+model DeliverableReview {
+  id           String   @id @default(uuid(7))
+  submissionId String
+  reviewerId   String
+  reviewerRole String // MENTOR | ENTREPRISE
+  decision     String // COMMENTAIRE | CORRECTION | APPROUVE | VALIDE
+  comment      String?
+  createdAt    DateTime @default(now())
+  submission   DeliverableSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId])
+}
+
+model Meeting {
+  id          String      @id @default(uuid(7))
+  projectId   String
+  title       String
+  type        MeetingType @default(COURANTE)
+  startsAt    DateTime
+  durationMin Int         @default(60)
+  agenda      String?
+  description String?
+  videoUrl    String?
+  minutes     String?
+  createdById String
+  createdAt   DateTime    @default(now())
+  project     Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  participants MeetingParticipant[]
+
+  @@index([projectId, startsAt])
+}
+
+model MeetingParticipant {
+  id        String  @id @default(uuid(7))
+  meetingId String
+  userId    String
+  rsvp      String  @default("EN_ATTENTE") // EN_ATTENTE | ACCEPTE | REFUSE
+  meeting   Meeting @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, userId])
+}
+
+model MentorReport {
+  id                String   @id @default(uuid(7))
+  projectId         String
+  mentorId          String
+  weekStart         DateTime
+  summary           String
+  risks             String?
+  nextSteps         String?
+  health            String   @default("VERT") // VERT | ORANGE | ROUGE
+  visibleToCompany  Boolean  @default(true)
+  visibleToReferent Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, weekStart])
+}
+
+/* ===================== Phase 4 : évaluations, badges, attestations, cohortes, signalements ===================== */
+
+model Evaluation {
+  id            String         @id @default(uuid(7))
+  projectId     String
+  type          EvaluationType
+  evaluatorId   String
+  subjectUserId String? // null pour l'évaluation du projet / de l'expérience
+  rating        Int // 1 à 5
+  comment       String?
+  criteria      Json?
+  hidden        Boolean        @default(false) // modération
+  hiddenReason  String?
+  submittedAt   DateTime       @default(now())
+  project       Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  skills        EvaluationSkill[]
+
+  @@unique([projectId, type, evaluatorId, subjectUserId])
+  @@index([subjectUserId])
+}
+
+model EvaluationSkill {
+  id             String     @id @default(uuid(7))
+  evaluationId   String
+  skillId        String
+  demonstrated   SkillLevel
+  evaluation     Evaluation @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  skill          Skill      @relation(fields: [skillId], references: [id])
+
+  @@unique([evaluationId, skillId])
+}
+
+model BadgeDefinition {
+  id          String    @id @default(uuid(7))
+  code        String    @unique
+  name        String
+  description String
+  type        BadgeType
+  skillId     String?
+  sectorName  String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  awards      BadgeAward[]
+}
+
+model BadgeAward {
+  id           String          @id @default(uuid(7))
+  badgeId      String
+  studentId    String
+  projectId    String?
+  awardedAt    DateTime        @default(now())
+  evidence     Json?
+  /// Assertion compatible Open Badges v2 (préparée ; export LinkedIn en v2)
+  assertion    Json?
+  revokedAt    DateTime?
+  badge        BadgeDefinition @relation(fields: [badgeId], references: [id])
+  student      StudentProfile  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  project      Project?        @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  @@unique([badgeId, studentId, projectId])
+  @@index([studentId])
+}
+
+model Certification {
+  id               String         @id @default(uuid(7))
+  studentId        String
+  skillId          String
+  level            SkillLevel
+  basedOnProjects  Int
+  issuedAt         DateTime       @default(now())
+  student          StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skillId])
+}
+
+model AcademicValidation {
+  id          String         @id @default(uuid(7))
+  projectId   String
+  studentId   String
+  referentId  String?
+  status      AcademicStatus @default(EN_ATTENTE)
+  credits     Decimal?       @db.Decimal(4, 1)
+  comment     String?
+  decidedAt   DateTime?
+  project     Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, studentId])
+  @@index([status])
+}
+
+model Attestation {
+  id               String         @id @default(uuid(7))
+  projectId        String
+  studentId        String
+  fileId           String
+  verificationCode String         @unique
+  issuedAt         DateTime       @default(now())
+  project          Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  student          StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, studentId])
+}
+
+model Cohort {
+  id            String        @id @default(uuid(7))
+  institutionId String
+  name          String
+  academicYear  String
+  createdAt     DateTime      @default(now())
+  institution   Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  members       CohortMember[]
+
+  @@unique([institutionId, name, academicYear])
+}
+
+model CohortMember {
+  cohortId  String
+  studentId String
+  cohort    Cohort         @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([cohortId, studentId])
+}
+
+model Report {
+  id          String       @id @default(uuid(7))
+  reporterId  String
+  targetType  String // CHALLENGE | PROJECT | USER | MESSAGE | EVALUATION
+  targetId    String
+  reason      String
+  status      ReportStatus @default(OUVERT)
+  handledById String?
+  handledNote String?
+  createdAt   DateTime     @default(now())
+  handledAt   DateTime?
+
+  @@index([status, createdAt])
+}

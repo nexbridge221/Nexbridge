@@ -1,0 +1,21 @@
+{
+  "name": "nexbridge",
+  "private": true,
+  "version": "0.1.0",
+  "description": "NEXBRIDGE — Connect. Innovate. Transform.",
+  "packageManager": "pnpm@12.21.0",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @nexbridge/api --filter @nexbridge/web dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "db:generate": "pnpm --filter @nexbridge/api db:generate",
+    "db:migrate": "pnpm --filter @nexbridge/api db:migrate",
+    "db:seed": "pnpm --filter @nexbridge/api db:seed",
+    "services:start": "bash scripts/services.sh start",
+    "services:stop": "bash scripts/services.sh stop",
+    "services:status": "bash scripts/services.sh status"
+  }
+}

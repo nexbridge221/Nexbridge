@@ -1,0 +1,192 @@
+{
+  "hero": {
+    "eyebrow": "Innovation ouverte · Apprentissage par projet",
+    "title": "Les idées prennent vie lorsque les talents se rencontrent.",
+    "subtitle": "NEXBRIDGE connecte les entreprises, les étudiants et les experts autour de projets concrets pour transformer les défis d'aujourd'hui en innovations de demain.",
+    "ctaChallenge": "Proposer un défi",
+    "ctaOpportunities": "Découvrir les opportunités",
+    "trust": "Sénégal et Afrique de l'Ouest · FCFA et EUR · Conçu pour les connexions limitées",
+    "diagramLabel": "Schéma de l'écosystème NEXBRIDGE : entreprises, étudiants, établissements académiques et experts reliés par des projets.",
+    "nodes": { "company": "Entreprises", "student": "Étudiants", "institution": "Établissements", "mentor": "Experts & Mentors", "projects": "Projets" }
+  },
+  "problem": {
+    "eyebrow": "Le constat",
+    "title": "Trois acteurs, un même fossé entre la formation et la réalité du terrain.",
+    "subtitle": "Les compétences existent, les problématiques aussi. Ce qui manque, c'est le pont.",
+    "actors": [
+      { "key": "company", "title": "Entreprises", "points": ["Difficulté à trouver des compétences adaptées à leurs problématiques.", "Coût élevé de certaines prestations de conseil et d'innovation.", "Difficulté à identifier de nouveaux talents."] },
+      { "key": "student", "title": "Étudiants", "points": ["Manque d'expérience professionnelle concrète.", "Difficulté à valoriser leurs compétences.", "Décalage entre apprentissage académique et besoins des entreprises."] },
+      { "key": "institution", "title": "Établissements académiques", "points": ["Difficulté à développer les projets interdisciplinaires.", "Besoin de renforcer les liens avec le monde professionnel.", "Nécessité de mesurer les compétences développées."] }
+    ],
+    "solutionTitle": "NEXBRIDGE : une solution commune",
+    "solutionBody": "Une seule plateforme pour déposer un défi, constituer l'équipe idéale, piloter le projet de bout en bout et valoriser les compétences acquises. Chacun y trouve de la valeur : des solutions concrètes, une expérience réelle, une pertinence terrain."
+  },
+  "how": {
+    "eyebrow": "Comment ça marche ?",
+    "title": "Du défi à l'impact, en quatre étapes.",
+    "subtitle": "Un parcours clair, accompagné et mesurable.",
+    "steps": [
+      { "title": "L'entreprise soumet un défi", "body": "Un assistant en cinq étapes aide à structurer le contexte, les livrables, l'équipe, le calendrier et le budget." },
+      { "title": "NexMatch identifie les profils", "body": "Le moteur de matching propose les équipes les plus adaptées, avec un score et l'explication de chaque choix." },
+      { "title": "Les étudiants collaborent avec un mentor", "body": "L'équipe travaille dans NexSpace : tâches, jalons, documents, messagerie et réunions, avec l'appui d'un expert." },
+      { "title": "Le projet est livré, évalué et valorisé", "body": "Livrables validés, évaluations croisées, badges de compétences et attestation pour chaque participant." }
+    ],
+    "cta": "Voir le parcours en détail"
+  },
+  "solutions": {
+    "eyebrow": "Nos solutions",
+    "title": "Huit modules, une seule plateforme.",
+    "subtitle": "Tout ce qu'il faut pour passer d'un besoin à un résultat, sans quitter NEXBRIDGE.",
+    "learnMore": "En savoir plus",
+    "items": [
+      { "slug": "nexbrief", "icon": "FileText", "name": "NexBrief", "tagline": "Création et soumission des défis", "body": "Un assistant guidé en cinq étapes pour transformer un besoin en brief clair : contexte, périmètre, équipe, calendrier, budget. Brouillon automatique et modèles sectoriels." },
+      { "slug": "nexmatch", "icon": "Sparkles", "name": "NexMatch", "tagline": "Matching intelligent par IA", "body": "Les trois meilleures équipes pour chaque défi, avec un score de correspondance, la diversité des profils et l'explication du choix. Candidature libre et composition manuelle possibles." },
+      { "slug": "nexspace", "icon": "KanbanSquare", "name": "NexSpace", "tagline": "Espace collaboratif de gestion des projets", "body": "Kanban, liste, calendrier, jalons, documents, messagerie, livrables et réunions : le cœur du travail d'équipe, avec le suivi du mentor." },
+      { "slug": "nexbadge", "icon": "Award", "name": "NexBadge", "tagline": "Compétences et certifications", "body": "Un référentiel de compétences à quatre niveaux, des badges attribués après chaque projet validé, un portfolio public et des attestations téléchargeables." },
+      { "slug": "nexdash", "icon": "BarChart3", "name": "NexDash", "tagline": "Tableaux de bord et statistiques", "body": "Un tableau de bord par profil, alimenté par les données réelles de la plateforme : projets, progression, compétences, cohortes." },
+      { "slug": "paiement", "icon": "CreditCard", "name": "Paiement", "tagline": "Transactions et facturation", "body": "Une architecture prête pour la carte bancaire, le Mobile Money et le virement, avec commissions, factures PDF et historique. Mise en service progressive." },
+      { "slug": "profils", "icon": "UserCircle", "name": "Gestion des profils", "tagline": "Un espace personnalisé par utilisateur", "body": "Entreprise, étudiant, mentor, référent académique : chacun dispose d'un profil, d'un onboarding et d'un environnement adaptés à ses missions." },
+      { "slug": "back-office", "icon": "ShieldCheck", "name": "Back-office", "tagline": "Administration et pilotage", "body": "Validation des organisations et des défis, gestion des utilisateurs, des compétences et des badges, modération, rapports et journal d'activité." }
+    ]
+  },
+  "companies": {
+    "eyebrow": "Pour les entreprises",
+    "title": "Des défis résolus par des équipes motivées, à votre rythme.",
+    "subtitle": "Accédez à des compétences fraîches et complémentaires, accompagnées par des experts, sans la lourdeur d'une prestation classique.",
+    "benefits": [
+      "Soumettre des défis stratégiques.",
+      "Accéder à des équipes interdisciplinaires.",
+      "Suivre l'avancement des projets.",
+      "Collaborer avec des experts.",
+      "Identifier de futurs talents."
+    ],
+    "cta": "Déposer un défi",
+    "pageIntro": "NEXBRIDGE vous donne un accès structuré à des équipes d'étudiants motivés, encadrées par des mentors, pour traiter des problématiques réelles."
+  },
+  "students": {
+    "eyebrow": "Pour les étudiants",
+    "title": "Passez de la théorie à l'expérience professionnelle réelle.",
+    "subtitle": "Travaillez sur de vrais projets, développez des compétences reconnues et construisez un portfolio qui parle pour vous.",
+    "benefits": [
+      "Accéder à des projets réels.",
+      "Développer des compétences techniques et transversales.",
+      "Travailler en équipe.",
+      "Être accompagné par des experts.",
+      "Construire un portfolio professionnel.",
+      "Obtenir des badges et certifications."
+    ],
+    "cta": "Rejoindre la communauté",
+    "pageIntro": "Chaque projet validé enrichit votre profil : compétences démontrées, évaluations, badges et attestation."
+  },
+  "institutions": {
+    "eyebrow": "Pour les établissements académiques",
+    "title": "Faites vivre l'apprentissage par projet et valorisez vos étudiants.",
+    "subtitle": "Un outil de pilotage pour relier vos cohortes au monde professionnel et mesurer les compétences développées.",
+    "benefits": [
+      "Le suivi des cohortes d'étudiants.",
+      "La validation académique des projets.",
+      "Le suivi des compétences.",
+      "La possibilité d'attribuer des crédits ECTS ou équivalents.",
+      "Les statistiques et rapports pédagogiques."
+    ],
+    "cta": "Devenir partenaire académique",
+    "pageIntro": "Votre établissement garde la main sur la validation des projets et l'attribution des crédits."
+  },
+  "mentors": {
+    "eyebrow": "Pour les experts et mentors",
+    "title": "Transmettez votre expertise et accompagnez la prochaine génération.",
+    "subtitle": "Supervisez des équipes sur des projets concrets avec les outils de suivi de NexSpace.",
+    "benefits": [
+      "Superviser des équipes sur des projets réels.",
+      "Suivre la progression et repérer les projets en difficulté.",
+      "Commenter les livrables et valider les étapes.",
+      "Évaluer les étudiants et produire des rapports de suivi.",
+      "Choisir vos disponibilités et le nombre de projets simultanés."
+    ],
+    "cta": "Devenir mentor",
+    "pageIntro": "Vous choisissez vos secteurs d'expertise et votre disponibilité. NEXBRIDGE s'occupe du cadre."
+  },
+  "marketplace": {
+    "eyebrow": "Marketplace des défis",
+    "title": "Des projets réels, ouverts aux candidatures.",
+    "subtitle": "Consultez librement les défis publics. Pour postuler, créez un compte étudiant.",
+    "search": "Rechercher un défi",
+    "sector": "Secteur",
+    "allSectors": "Tous les secteurs",
+    "duration": "Durée",
+    "weeksValue": "{{count}} semaine",
+    "weeksValue_other": "{{count}} semaines",
+    "participants": "{{count}} étudiant recherché",
+    "participants_other": "{{count}} étudiants recherchés",
+    "skills": "Compétences recherchées",
+    "company": "Entreprise",
+    "seeAll": "Voir tous les défis",
+    "empty": "Aucun défi n'est publié pour le moment.",
+    "emptyHint": "Les premiers défis validés apparaîtront ici. Vous êtes une entreprise ? Déposez le vôtre.",
+    "emptyFiltered": "Aucun défi ne correspond à votre recherche.",
+    "reset": "Réinitialiser les filtres",
+    "loadError": "Impossible de charger les défis.",
+    "apply": "Postuler à ce défi",
+    "applyHint": "La candidature nécessite un compte étudiant. L'inscription est gratuite.",
+    "context": "Contexte du défi",
+    "objectives": "Objectifs",
+    "back": "Retour aux défis",
+    "notFound": "Ce défi n'existe pas ou n'est plus public."
+  },
+  "stats": {
+    "eyebrow": "NEXBRIDGE en chiffres",
+    "title": "Des chiffres issus de la plateforme.",
+    "note": "Ces chiffres sont calculés en temps réel à partir des données de la plateforme.",
+    "demoNote": "Environnement de démonstration : ces chiffres incluent des données fictives.",
+    "items": { "students": "Étudiants actifs", "mentors": "Experts et mentors", "companies": "Entreprises validées", "institutions": "Établissements partenaires", "challenges": "Défis publiés" }
+  },
+  "testimonials": {
+    "eyebrow": "Témoignages",
+    "title": "Ils en parlent.",
+    "demoBadge": "Exemple",
+    "demoNote": "Exemple de témoignage fictif — environnement de démonstration."
+  },
+  "partners": {
+    "eyebrow": "Partenaires",
+    "title": "Partenaires institutionnels et académiques",
+    "empty": "Les partenaires de NEXBRIDGE seront présentés ici.",
+    "cta": "Devenir partenaire"
+  },
+  "faq": { "eyebrow": "Questions fréquentes", "title": "Vous avez des questions ?", "empty": "Les questions fréquentes seront publiées prochainement.", "all": "Toutes les questions", "audience": { "GENERAL": "Général", "ENTREPRISE": "Entreprises", "ETUDIANT": "Étudiants", "ETABLISSEMENT": "Établissements" } },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Parlons de votre projet.",
+    "subtitle": "Entreprise, établissement, mentor ou étudiant : écrivez-nous, nous vous répondons rapidement.",
+    "name": "Nom complet", "email": "Adresse e-mail", "organization": "Organisation (facultatif)", "subject": "Objet", "message": "Message",
+    "consent": "J'accepte que NEXBRIDGE traite ces informations pour répondre à ma demande, conformément à la politique de confidentialité.",
+    "submit": "Envoyer le message", "success": "Merci ! Votre message a bien été enregistré, nous vous répondrons rapidement."
+  },
+  "newsletter": {
+    "title": "Restez informé",
+    "subtitle": "Une lettre d'information sur les défis, les projets et les nouveautés de la plateforme.",
+    "email": "Votre adresse e-mail", "consent": "J'accepte de recevoir la newsletter NEXBRIDGE (désinscription à tout moment).",
+    "submit": "Je m'abonne", "success": "Un e-mail de confirmation vient de vous être envoyé. Cliquez sur le lien pour finaliser votre inscription.",
+    "confirmed": "Inscription confirmée. Merci !", "confirmError": "Ce lien est invalide ou a expiré."
+  },
+  "cta": {
+    "title": "Prêt à transformer un défi en innovation ?",
+    "subtitle": "Rejoignez NEXBRIDGE et connectez-vous aux talents, aux experts et aux projets qui comptent.",
+    "primary": "Rejoindre NEXBRIDGE",
+    "secondary": "Découvrir les projets"
+  },
+  "howPage": {
+    "title": "Comment fonctionne NEXBRIDGE ?",
+    "intro": "Chaque défi suit un parcours en quatre étapes, avec des validations à chaque moment clé.",
+    "details": [
+      { "title": "1. L'entreprise soumet un défi", "items": ["Vérification de l'organisation (NINEA, registre de commerce).", "Assistant NexBrief en cinq étapes, avec modèles sectoriels.", "Relecture par l'équipe NEXBRIDGE avant publication."] },
+      { "title": "2. NexMatch identifie les profils et équipes", "items": ["Trois équipes proposées, avec score et explications.", "Candidatures libres des étudiants ou composition manuelle.", "Validation par l'entreprise, puis acceptation individuelle de chaque étudiant (72 h)."] },
+      { "title": "3. Les étudiants collaborent avec un mentor dans NexSpace", "items": ["Kanban, liste et calendrier des tâches, jalons, documents.", "Messagerie de projet et réunions.", "Suivi du mentor, alertes et rapports hebdomadaires."] },
+      { "title": "4. Le projet est livré, évalué et valorisé", "items": ["Livrables relus par le mentor puis validés par l'entreprise.", "Évaluations croisées et validation académique éventuelle.", "Badges, certifications et attestation PDF."] }
+    ]
+  },
+  "solutionPage": { "back": "Toutes les solutions", "status": "Statut de disponibilité", "cta": "Rejoindre NEXBRIDGE" },
+  "legal": {
+    "draftBanner": "Version provisoire — ce texte doit être relu et complété par l'éditeur de NEXBRIDGE et son conseil juridique avant la mise en production.",
+    "updated": "Dernière mise à jour du modèle : novembre 2026"
+  }
+}

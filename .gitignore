@@ -1,0 +1,20 @@
+node_modules
+dist
+build
+coverage
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+.nexbridge-local/
+uploads/
+keys/
+playwright-report/
+test-results/
+.turbo
+
+# Documents de travail et maquettes (non publiés)
+/*.jpeg
+/*.png
+/*.docx

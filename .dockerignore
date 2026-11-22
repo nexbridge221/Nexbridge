@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/dist
+.nexbridge-local
+.env
+.env.*
+!.env.example
+*.log
+.git
+docs
+*.jpeg
+*.png
+*.docx

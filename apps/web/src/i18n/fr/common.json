@@ -1,0 +1,40 @@
+{
+  "brand": { "name": "NEXBRIDGE", "slogan": "Connect. Innovate. Transform." },
+  "nav": {
+    "home": "Accueil",
+    "how": "Comment ça marche ?",
+    "companies": "Entreprises",
+    "students": "Étudiants",
+    "institutions": "Établissements",
+    "mentors": "Experts & Mentors",
+    "projects": "Découvrir les projets",
+    "login": "Connexion",
+    "join": "Rejoindre NEXBRIDGE",
+    "menu": "Menu",
+    "close": "Fermer",
+    "skip": "Aller au contenu principal",
+    "main": "Navigation principale"
+  },
+  "actions": {
+    "save": "Enregistrer", "cancel": "Annuler", "confirm": "Confirmer", "delete": "Supprimer", "back": "Retour", "next": "Suivant",
+    "send": "Envoyer", "retry": "Réessayer", "loadMore": "Voir plus", "search": "Rechercher", "seeProject": "Voir le projet", "close": "Fermer",
+    "download": "Télécharger", "edit": "Modifier", "add": "Ajouter", "remove": "Retirer", "finish": "Terminer"
+  },
+  "states": {
+    "loading": "Chargement…", "error": "Une erreur est survenue.", "empty": "Rien à afficher pour l'instant.", "soon": "Bientôt disponible",
+    "required": "Obligatoire", "optional": "Facultatif", "demo": "Donnée de démonstration", "network": "Connexion impossible. Vérifiez votre réseau."
+  },
+  "roles": {
+    "ENTREPRISE": "Entreprise", "ETUDIANT": "Étudiant", "MENTOR": "Expert / Mentor", "REFERENT_ACADEMIQUE": "Référent académique", "ADMIN": "Administrateur", "SUPER_ADMIN": "Super administrateur"
+  },
+  "footer": {
+    "tagline": "La plateforme d'innovation ouverte et d'apprentissage par projet pour le Sénégal et l'Afrique de l'Ouest.",
+    "platform": "Plateforme", "company": "NEXBRIDGE", "legal": "Informations légales",
+    "mentions": "Mentions légales", "cgu": "Conditions générales d'utilisation", "privacy": "Politique de confidentialité", "cookies": "Cookies",
+    "contact": "Contact", "faq": "Questions fréquentes", "rights": "© {{year}} NEXBRIDGE. Tous droits réservés.", "social": "Réseaux sociaux"
+  },
+  "banner": {
+    "demo": "Environnement de démonstration : les données affichées (comptes, défis, témoignages) sont fictives.",
+    "mail": "E-mails non envoyés : aucun service d'e-mail n'est configuré, les messages sont conservés dans la boîte de développement."
+  }
+}

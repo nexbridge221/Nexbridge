@@ -1,0 +1,5 @@
+name = "nexbridge"
+compatibility_date = "2025-01-01"
+pages_build_output_dir = "dist"
+# La variable API_ORIGIN (adresse publique de l'API, ex. https://nexbridge-api.onrender.com) se définit dans
+# Cloudflare > Workers et Pages > nexbridge > Settings > Variables, ou avec : npx wrangler pages secret put API_ORIGIN --project-name nexbridge

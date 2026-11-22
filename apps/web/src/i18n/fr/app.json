@@ -1,0 +1,48 @@
+{
+  "nav": {
+    "dashboard": "Tableau de bord", "challenges": "Défis", "projects": "Projets", "applications": "Candidatures", "badges": "Badges & compétences",
+    "profile": "Mon profil", "settings": "Paramètres", "notifications": "Notifications", "messages": "Messagerie", "company": "Mon organisation",
+    "cohorts": "Cohortes", "mentoring": "Projets supervisés", "admin": "Administration", "adminDashboard": "Pilotage", "users": "Utilisateurs", "kyc": "Validation des organisations",
+    "review": "Gestion des défis", "logout": "Se déconnecter", "account": "Mon compte", "search": "Rechercher…", "openMenu": "Ouvrir le menu", "closeMenu": "Fermer le menu", "primary": "Navigation de l'application"
+  },
+  "banner": {
+    "verify": "Confirmez votre adresse e-mail pour accéder à toutes les fonctionnalités.", "resend": "Renvoyer l'e-mail", "resent": "E-mail de confirmation renvoyé."
+  },
+  "dashboard": {
+    "welcome": "Bonjour {{name}}",
+    "intro": "Voici où vous en êtes sur NEXBRIDGE.",
+    "onboardingTitle": "Complétez votre profil", "onboardingBody": "Un profil complet est nécessaire pour postuler, être proposé dans NexMatch ou déposer des défis.", "onboardingCta": "Continuer",
+    "profileDone": "Profil complété", "soonTitle": "Modules à venir", "soonBody": "Ces espaces sont en cours de développement et seront activés par phases.",
+    "kycTitle": "Validation de l'organisation", "kycPending": "Votre organisation doit être validée avant de pouvoir publier des défis.", "kycGo": "Gérer ma validation",
+    "browse": "Parcourir les défis publics", "stats": "Votre activité", "noData": "Aucune donnée pour l'instant : vos indicateurs s'afficheront dès votre premier projet.",
+    "checklist": "Prochaines étapes"
+  },
+  "soon": { "title": "Bientôt disponible", "body": "Ce module est prévu dans une prochaine phase du développement. Il n'est pas encore actif.", "phase": "Phase prévue", "back": "Retour au tableau de bord" },
+  "profile": {
+    "title": "Mon profil", "account": "Informations du compte", "firstName": "Prénom", "lastName": "Nom", "phone": "Téléphone", "email": "Adresse e-mail", "saved": "Modifications enregistrées.",
+    "student": { "section": "Parcours académique", "institution": "Établissement", "program": "Filière", "level": "Niveau d'études", "bio": "Présentation", "city": "Ville", "country": "Pays", "availability": "Disponibilité", "availabilityNotes": "Précisions sur vos disponibilités", "skills": "Compétences", "skillsHelp": "Sélectionnez vos compétences et indiquez votre niveau pour chacune.", "addSkill": "Ajouter une compétence", "portfolioPublic": "Rendre mon portfolio public", "portfolioPublicHelp": "Votre profil pourra être consulté par les entreprises et les établissements. Vous pouvez le masquer à tout moment.", "sectors": "Secteurs qui m'intéressent" },
+    "mentor": { "section": "Profil professionnel", "bio": "Biographie", "years": "Années d'expérience", "rate": "Tarif horaire indicatif (FCFA)", "max": "Projets simultanés acceptés", "sectors": "Secteurs d'expertise", "certifications": "Certifications" },
+    "referent": { "section": "Établissement", "jobTitle": "Fonction", "institution": "Établissement rattaché", "status": "Statut de l'établissement", "pending": "En attente de validation par NEXBRIDGE", "validated": "Validé", "programs": "Filières gérées" },
+    "company": { "section": "Organisation", "legalName": "Raison sociale", "sector": "Secteur d'activité", "size": "Taille", "country": "Pays", "city": "Ville", "description": "Description", "website": "Site web" }
+  },
+  "onboarding": {
+    "title": "Bienvenue sur NEXBRIDGE", "subtitle": "Quelques étapes pour personnaliser votre espace.", "step": "Étape {{current}} sur {{total}}", "done": "Votre profil est prêt.", "finish": "Accéder à mon espace",
+    "skip": "Compléter plus tard", "missing": "Il manque : {{items}}."
+  },
+  "company": {
+    "title": "Mon organisation", "profile": "Profil de l'organisation", "kyc": "Validation de l'organisation (KYC)", "kycIntro": "Pour publier des défis, votre organisation doit être vérifiée. Renseignez vos identifiants légaux puis déposez les pièces justificatives (PDF, PNG ou JPEG, 10 Mo maximum). La vérification est traitée par un administrateur, généralement sous 48 h.",
+    "ninea": "NINEA", "rccm": "Registre de commerce (RCCM)", "identifiersSaved": "Identifiants enregistrés (chiffrés).", "identifiersHelp": "Ces informations sont chiffrées et ne sont jamais affichées en clair.",
+    "upload": "Déposer une pièce", "docType": "Type de pièce", "documents": "Pièces déposées", "noDocuments": "Aucune pièce déposée.", "status": "Statut",
+    "members": "Collaborateurs", "membersHelp": "Ajoutez des collègues : ils recevront un e-mail pour activer leur compte.", "invite": "Inviter un collaborateur", "contactRole": "Rôle de contact", "jobTitle": "Fonction", "owner": "Propriétaire", "noMembers": "Aucun autre collaborateur.", "invited": "Invitation envoyée.",
+    "docTypes": { "NINEA": "NINEA", "RCCM": "Registre de commerce", "AUTRE": "Autre pièce" }
+  },
+  "settings": {
+    "title": "Paramètres", "tabs": { "security": "Sécurité", "notifications": "Notifications", "privacy": "Confidentialité" },
+    "password": { "title": "Mot de passe", "current": "Mot de passe actuel", "new": "Nouveau mot de passe", "submit": "Changer le mot de passe", "done": "Mot de passe modifié. Vous allez être déconnecté." },
+    "twofa": { "title": "Authentification à deux facteurs (2FA)", "body": "Ajoutez une couche de sécurité avec une application d'authentification (Google Authenticator, Authy, 1Password…).", "enable": "Activer la 2FA", "scan": "Scannez ce QR code avec votre application, puis saisissez le code à 6 chiffres.", "secret": "Clé de configuration manuelle", "code": "Code à 6 chiffres", "confirm": "Activer", "enabled": "La 2FA est activée sur votre compte.", "disable": "Désactiver la 2FA", "disabled": "2FA désactivée.", "activated": "2FA activée." },
+    "notifications": { "title": "Préférences de notification", "body": "Choisissez comment être prévenu pour chaque type d'événement.", "inApp": "Dans l'application", "email": "Par e-mail", "types": { "challenge": "Défis (validation, publication)", "match": "Propositions d'équipe", "project": "Projets et tâches", "message": "Messages et mentions", "system": "Informations de la plateforme" } },
+    "privacy": { "title": "Vos données personnelles", "body": "Conformément au RGPD et à la loi sénégalaise sur la protection des données personnelles, vous pouvez consulter, exporter et supprimer vos données.", "consents": "Consentements enregistrés", "export": "Exporter mes données (JSON)", "delete": "Supprimer mon compte", "deleteBody": "Votre compte sera anonymisé : vos informations personnelles sont effacées. Cette action est définitive.", "deleteConfirm": "Saisissez votre mot de passe pour confirmer", "deleteSubmit": "Supprimer définitivement", "deleted": "Votre compte a été supprimé." }
+  },
+  "notifications": { "title": "Notifications", "empty": "Aucune notification.", "markAll": "Tout marquer comme lu", "unread": "{{count}} non lue", "unread_other": "{{count}} non lues" },
+  "kyc": { "NON_SOUMIS": "Non soumis", "EN_VERIFICATION": "En vérification", "VALIDE": "Validé", "REFUSE": "Refusé" }
+}
