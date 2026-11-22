@@ -7,6 +7,7 @@ allowBuilds:
   "@prisma/engines": true
   "@swc/core": true
   esbuild: true
+  msgpackr-extract: false   # dépendance native facultative de BullMQ : repli en JavaScript, build ignoré
   prisma: true
 overrides:
   effect: "^3.22.1"
