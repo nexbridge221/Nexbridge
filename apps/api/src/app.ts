@@ -14,6 +14,7 @@ import { notificationRouter } from "./modules/notifications/routes";
 import { challengeRouter } from "./modules/challenges/routes";
 import { adminRouter } from "./modules/admin/routes";
 import { mentorRouter, projectsRouter } from "./modules/nexspace";
+import { internalRouter } from "./modules/internal/routes";
 import { academicPilotRouter, attestationsRouter, badgesRouter, reportsRouter } from "./modules/pilotage/userRoutes";
 import { dashboardsRouter } from "./modules/pilotage/dashboards";
 import { backofficeRouter } from "./modules/pilotage/backoffice";
@@ -49,6 +50,7 @@ export function createApp(): Express {
     }
   });
 
+  app.use("/api/internal", internalRouter);
   app.use("/api/auth", authRouter);
   app.use("/api/public", publicRouter);
   app.use("/api/public", publicPilotageRouter);

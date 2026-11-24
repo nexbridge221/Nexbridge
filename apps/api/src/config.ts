@@ -51,7 +51,8 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
 });
 
-const parsed = envSchema.safeParse(process.env);
+// Netlify Database fournit NETLIFY_DB_URL (la branche de base de données du déploiement) : utilisée si DATABASE_URL est absente.
+const parsed = envSchema.safeParse({ ...process.env, DATABASE_URL: process.env.DATABASE_URL || process.env.NETLIFY_DB_URL });
 if (!parsed.success) {
   // eslint-disable-next-line no-console
   console.error("Configuration invalide :", parsed.error.flatten().fieldErrors);

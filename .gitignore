@@ -18,3 +18,5 @@ test-results/
 /*.jpeg
 /*.png
 /*.docx
+
+.netlify

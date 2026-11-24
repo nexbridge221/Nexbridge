@@ -4,7 +4,8 @@
 // (voir docs/03-nexspace-donnees-design.md §B pour le modèle cible complet).
 
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "client" // sans moteur natif : adaptateur PostgreSQL (@prisma/adapter-pg), empaquetable pour Netlify
 }
 
 datasource db {

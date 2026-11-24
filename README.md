@@ -151,6 +151,4 @@ Toutes documentées dans [`.env.example`](.env.example). Points d'attention :
 - Les projets n'ont pas de notion de « publication » : « publier » s'applique aux défis.
 
 ### Déploiement
-Site sur Cloudflare Pages, API + PostgreSQL + Redis sur Render : voir `docs/05-deploiement-cloudflare.md` (fichiers : `render.yaml`, `apps/api/Dockerfile`, `apps/web/functions/`, `apps/web/wrangler.toml`). Non déployé à ce jour ; l image Docker n a pas pu être construite localement (Docker absent).
-
-**État du déploiement (22/11/2026)** : API https://nexbridge-api.onrender.com (Render, plans gratuits) ; site https://nexbridge-44a.pages.dev (Cloudflare Pages, projet « nexbridge », compte Nexbridge221). Redéployer le site : `cd apps/web && pnpm build && npx wrangler pages deploy dist --project-name nexbridge --branch main`.
+Plateforme complète sur Netlify (site, API sur Netlify Server en accès anticipé, base Netlify Database) : voir `docs/05-deploiement-netlify.md`. Les anciens déploiements Render et Cloudflare ont été abandonnés.

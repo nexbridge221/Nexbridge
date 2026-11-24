@@ -1,7 +1,0 @@
-name = "nexbridge"
-compatibility_date = "2025-01-01"
-pages_build_output_dir = "dist"
-[vars]
-API_ORIGIN = "https://nexbridge-api.onrender.com"
-
-# API_ORIGIN : adresse publique de l'API (Render), relayée par apps/web/functions/. Site : https://nexbridge-44a.pages.dev

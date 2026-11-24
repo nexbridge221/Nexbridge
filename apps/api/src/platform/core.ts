@@ -1,4 +1,5 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Redis } from "ioredis";
 import { pino } from "pino";
@@ -28,7 +29,7 @@ export const logger = pino({
 });
 
 /* ---------------- Base de données ---------------- */
-export const prisma = new PrismaClient({ datasourceUrl: config.databaseUrl });
+export const prisma = new PrismaClient({ adapter: new PrismaPg({ connectionString: config.databaseUrl, max: Number(process.env.DB_POOL_MAX ?? 10), idleTimeoutMillis: 30_000 }) });
 
 /* ---------------- Redis (optionnel : blacklist de tokens, limites) ---------------- */
 let redisClient: Redis | null = null;
