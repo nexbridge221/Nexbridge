@@ -14,7 +14,8 @@
     "db:generate": "node --env-file=../../.env ./node_modules/prisma/build/index.js generate",
     "db:migrate": "node --env-file=../../.env ./node_modules/prisma/build/index.js migrate dev",
     "db:deploy": "node --env-file=../../.env ./node_modules/prisma/build/index.js migrate deploy",
-    "db:seed": "tsx --env-file=../../.env src/seed/seed.ts"
+    "db:seed": "tsx --env-file=../../.env src/seed/seed.ts",
+    "build:netlify": "node scripts/build-netlify-server.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1172.0",
@@ -41,6 +42,7 @@
     "zod": "^3.25.0"
   },
   "devDependencies": {
+    "@netlify/server": "^0.1.6",
     "@swc/core": "^1.13.0",
     "@swc/jest": "^0.2.39",
     "@types/bcryptjs": "^3.0.0",
@@ -53,6 +55,7 @@
     "@types/node": "^24.0.0",
     "@types/pdfkit": "^0.17.7",
     "@types/supertest": "^6.0.3",
+    "esbuild": "^0.28.2",
     "jest": "^30.0.0",
     "prisma": "^6.19.0",
     "supertest": "^7.1.4",

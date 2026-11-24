@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import type { Config } from "@netlify/server";
-import { createApp } from "../../apps/api/src/app";
-import { attachRealtime } from "../../apps/api/src/platform/realtime";
+import { createApp } from "../src/app";
+import { attachRealtime } from "../src/platform/realtime";
 
 /**
  * API NEXBRIDGE sur Netlify Server : l'application Express est exposée telle quelle (même origine que le site,
@@ -12,4 +12,8 @@ const server = createServer(createApp());
 attachRealtime(server);
 export default server;
 
-export const config: Config = { path: ["/api/*", "/socket.io/*"], region: "fra", size: "small" };
+// Le client Prisma (sans moteur natif) lit son module WebAssembly sur le disque à l'exécution : il doit être embarqué.
+export const config: Config = {
+  path: ["/api/*", "/socket.io/*"], region: "fra", size: "small",
+  includedFiles: ["../../../../node_modules/.pnpm/@prisma+client@*/node_modules/.prisma/client/**"],
+};

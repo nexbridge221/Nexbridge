@@ -6,6 +6,7 @@
  *  - Les mots de passe des comptes de démo sont générés aléatoirement et écrits dans
  *    .nexbridge-local/demo-accounts.txt (ignoré par Git), jamais dans le code.
  */
+import { DEMO_CHALLENGES, DEMO_COMPANIES } from "./demo-challenges";
 import fs from "node:fs";
 import path from "node:path";
 import bcrypt from "bcryptjs";
@@ -154,6 +155,38 @@ async function seedDemo() {
     });
   }
 
+  // Organisations et défis de démonstration « réalistes » supplémentaires (voir demo-challenges.ts)
+  const companyByName = new Map(companyRows.map((c) => [c.legalName, c]));
+  for (const c of DEMO_COMPANIES) {
+    const u = await makeUser(`Entreprise (démo) ${c.name}`, c.owner, "ENTREPRISE", c.first, c.last);
+    let company = (await prisma.companyMember.findFirst({ where: { userId: u.id }, include: { company: true } }))?.company;
+    if (!company) {
+      company = await prisma.company.create({
+        data: { legalName: c.name, sector: c.sector, size: "PME", country: "Sénégal", city: c.city, description: c.description, kycStatus: "VALIDE", ninea: encrypt("0000000000"), rccm: encrypt("SN-DKR-0000-X-0000"), isDemo: true },
+      });
+      await prisma.companyMember.create({ data: { userId: u.id, companyId: company.id, isOwner: true } });
+    }
+    companyByName.set(company.legalName, company);
+  }
+  for (const ch of DEMO_CHALLENGES) {
+    const slug = `demo-${slugify(ch.title)}`.slice(0, 120);
+    if (await prisma.challenge.findUnique({ where: { slug } })) continue;
+    const company = companyByName.get(ch.company)!;
+    const owner = await prisma.companyMember.findFirstOrThrow({ where: { companyId: company.id, isOwner: true } });
+    const created = await prisma.challenge.create({
+      data: {
+        companyId: company.id, createdById: owner.userId, title: ch.title, slug, context: ch.context, objectives: ch.objectives, sectorId: sec(ch.sector),
+        keywords: ch.keywords, minStudyLevel: ch.level, teamSize: ch.team, durationWeeks: ch.weeks,
+        budgetAmount: BigInt(ch.budget), budgetPublic: false, budgetCurrency: "XOF", // le budget n'est jamais public
+        status: "PUBLIE", publishedAt: new Date(), isDemo: true,
+        skills: { create: ch.skills.map((n) => ({ skillId: bySlug(n).id, minLevel: "PRATICIEN" as const })) },
+        deliverables: { create: ch.deliverables },
+        milestones: { create: ch.milestones },
+      },
+    });
+    await prisma.challengeStatusHistory.create({ data: { challengeId: created.id, from: "EN_REVISION", to: "PUBLIE", note: "Défi de démonstration publié" } });
+  }
+
   if ((await prisma.testimonial.count({ where: { isDemo: true } })) === 0) {
     await prisma.testimonial.createMany({
       data: [
@@ -167,7 +200,8 @@ async function seedDemo() {
     fs.mkdirSync(config.localDir, { recursive: true });
     const file = path.join(config.localDir, "demo-accounts.txt");
     const body = accounts.map((a) => `${a.label}\n  e-mail      : ${a.email}\n  mot de passe: ${a.password}\n  rôle        : ${a.role}\n`).join("\n");
-    fs.writeFileSync(file, `COMPTES DE DÉMONSTRATION — générés le ${new Date().toISOString()}\n(ce fichier est ignoré par Git ; ne jamais utiliser en production)\n\n${body}`, { mode: 0o600 });
+    if (fs.existsSync(file)) fs.appendFileSync(file, `\n— comptes ajoutés le ${new Date().toISOString()} —\n${body}`);
+    else fs.writeFileSync(file, `COMPTES DE DÉMONSTRATION — générés le ${new Date().toISOString()}\n(ce fichier est ignoré par Git ; ne jamais utiliser en production)\n\n${body}`, { mode: 0o600 });
     console.log(`✔ ${accounts.length} comptes de démonstration créés → ${file}`);
   } else {
     console.log("• Comptes de démonstration déjà présents (mots de passe dans demo-accounts.txt s'il existe).");

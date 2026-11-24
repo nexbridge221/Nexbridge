@@ -4,14 +4,14 @@ Tout tourne sur Netlify : le site, l'API et la base de données.
 
 ```
 Navigateur ──► Netlify (CDN) : site React (apps/web/dist) + réécritures SPA (netlify.toml)
-                 └─ /api/*, /socket.io/*  ─► Netlify Server (netlify/server/index.ts) : l'API Express telle quelle
+                 └─ /api/*, /socket.io/*  ─► Netlify Server (apps/api/netlify/server/index.ts) : l'API Express telle quelle
                                                 └─► Netlify Database (PostgreSQL)
 Planificateur ──► netlify/functions/team-deadlines.mts (toutes les 10 min) ─► POST /api/internal/team-deadlines
 ```
 
 - **Même origine** pour le site et l'API : le cookie de session (`SameSite=Strict`) et le jeton CSRF fonctionnent comme en local.
 - **Netlify Server** est en **accès anticipé** (API susceptible de changer) et réservé aux plans à crédits.
-- **Netlify Database** : les migrations sont les fichiers de `netlify/database/migrations/` (appliqués par le déploiement) : `..._init` (schéma, généré depuis `apps/api/prisma/schema.prisma`) et `..._seed_demo` (données de **démonstration**). Prisma n'exécute pas de migrations sur Netlify.
+- **Netlify Database** : les migrations sont les fichiers de `netlify/database/migrations/` (appliqués par le déploiement) : `..._init` (schéma, généré depuis `apps/api/prisma/schema.prisma`) et `..._seed_demo` et `..._demo_challenges` (données de **démonstration** : 13 comptes, 17 défis publiés dont 12 « réalistes » de `apps/api/src/seed/demo-challenges.ts`). Prisma n'exécute pas de migrations sur Netlify.
 - **Prisma sans moteur natif** (`engineType = "client"` + `@prisma/adapter-pg`) pour que l'API soit empaquetable ; l'URL de la base est `NETLIFY_DB_URL` (utilisée si `DATABASE_URL` est absente).
 
 ## Variables d'environnement (Project configuration → Environment variables)
@@ -35,7 +35,7 @@ Les secrets se posent avec `netlify env:set NOM --secret --context production --
 
 ```bash
 source scripts/env.sh
-netlify deploy --build --prod --site <id-du-projet> --filter @nexbridge/web
+netlify deploy --prod --site <id-du-projet> --filter @nexbridge/api
 ```
 Le premier déploiement provisionne la base et applique les migrations. Le dossier `.netlify/` (lien local) est ignoré par Git.
 
@@ -46,3 +46,5 @@ Le premier déploiement provisionne la base et applique les migrations. Le dossi
 - **Données de démonstration** : les NINEA/RCCM des organisations de démo ont été chiffrés avec la clé locale, pas celle de Netlify : ils sont illisibles côté Netlify (affichés vides).
 - **Visibilité** : un nouveau projet Netlify est privé par défaut (connexion Netlify requise). Pour un lien public : Project configuration → Access & security → Visitor access.
 - **Paiements** : le registre de séquestre ne déplace aucun argent ; Stripe n'a jamais été testé avec les vrais services.
+
+- **Empaquetage de l'API** : le paquet partagé (TypeScript) est regroupé dans le bundle ; les dépendances npm restent externes. Le client Prisma sans moteur natif lit son module WebAssembly sur disque : il est embarqué via `includedFiles` dans `server-entry.ts`.

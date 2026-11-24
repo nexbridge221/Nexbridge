@@ -152,3 +152,5 @@ Toutes documentées dans [`.env.example`](.env.example). Points d'attention :
 
 ### Déploiement
 Plateforme complète sur Netlify (site, API sur Netlify Server en accès anticipé, base Netlify Database) : voir `docs/05-deploiement-netlify.md`. Les anciens déploiements Render et Cloudflare ont été abandonnés.
+
+- **Défis de démonstration réalistes** : 12 sujets (énergie, santé, éducation, commerce, tourisme, ONG, agro-industrie, finance) portés par 6 organisations fictives « [Démo] », ouverts aux candidatures ; le budget reste confidentiel. Ajoutés au seed local et aux migrations Netlify. Ce ne sont pas de vrais défis d'entreprises réelles : ceux-ci se déposent via NexBrief.

@@ -1,6 +1,6 @@
 # NEXBRIDGE sur Netlify : site statique (apps/web) + API (netlify/server) + base Netlify Database.
 [build]
-  command = "DATABASE_URL=postgresql://build:build@localhost/build pnpm --filter @nexbridge/api exec prisma generate && pnpm --filter @nexbridge/web build"
+  command = "DATABASE_URL=postgresql://build:build@localhost/build pnpm --filter @nexbridge/api exec prisma generate && pnpm --filter @nexbridge/web build && pnpm --filter @nexbridge/api run build:netlify"
   publish = "apps/web/dist"
 
 [build.environment]

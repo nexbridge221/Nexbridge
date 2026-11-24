@@ -20,3 +20,4 @@ test-results/
 /*.docx
 
 .netlify
+apps/api/netlify/server/
